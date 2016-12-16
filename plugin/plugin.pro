@@ -46,7 +46,9 @@ macx { # Untested!
     CONFIG += x86 ppc
 }
 
-HEADERS +=
+HEADERS += \
+    flapretractor.h
 
 SOURCES += \
     plugin.m.cpp \
+    flapretractor.cpp
