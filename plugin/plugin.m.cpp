@@ -47,14 +47,18 @@
 #include <XPLMUtilities.h>
 
 // PPL libraries
+#include <action.h>
 #include <log.h>
 #include <logwriter.h>
 #include <messagewindow.h>
+#include <menuitem.h>
+#include <onscreendisplay.h>
 #include <pluginpath.h>
 #include <processor.h>
 #include <simpleini/SimpleIni.h>
 
 #include <memory>
+#include <string>
 
 // Our classes and sim elements
 #include <flapretractor.h>
@@ -71,6 +75,27 @@ public:
     return 0;
   }
 } msgTimer;
+
+PPL::OnScreenDisplay osd(200, 50, "Hi I'm a PPL::OnScreenDisplay");
+
+class Menu {
+public:
+  Menu() : mi("Hello") { mi.addSubItem(&foo); }
+
+private:
+  PPL::MenuItem mi;
+  class Foo : public PPL::Action {
+  public:
+    Foo() : dr("PPLDemo/foo", PPL::ReadWrite, true) {}
+    const std::string name() const override { return "Foo"; }
+    void doAction() override { dr = 42; }
+
+  private:
+    PPL::OwnedData<int> dr;
+
+  } foo;
+
+} menu;
 
 using namespace std;
 using namespace PPL;
