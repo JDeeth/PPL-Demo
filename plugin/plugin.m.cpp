@@ -49,12 +49,28 @@
 // PPL libraries
 #include <log.h>
 #include <logwriter.h>
+#include <messagewindow.h>
 #include <pluginpath.h>
+#include <processor.h>
 #include <simpleini/SimpleIni.h>
+
+#include <memory>
 
 // Our classes and sim elements
 #include <flapretractor.h>
 FlapRetractor flapretractor;
+
+std::unique_ptr<PPL::MessageWindow> msg;
+class SendAMessage : public PPL::Processor {
+public:
+  SendAMessage() : PPL::Processor(5.f) {} // start after 5 seconds
+  float callback(float, float, int) override {
+    msg = std::make_unique<PPL::MessageWindow>(
+        500, 100, "Hello, world!", "I am a message box! Close me and you die.",
+        true);
+    return 0;
+  }
+} msgTimer;
 
 using namespace std;
 using namespace PPL;
