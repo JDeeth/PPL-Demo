@@ -47,10 +47,10 @@
 #include <XPLMUtilities.h>
 
 // PPL libraries
-#include <action.h>
 #include <log.h>
 #include <logwriter.h>
 #include <messagewindow.h>
+#include <menuaction.h>
 #include <menuitem.h>
 #include <onscreendisplay.h>
 #include <pluginpath.h>
@@ -59,51 +59,48 @@
 
 #include <memory>
 #include <string>
+#include <vector>
+
+// Declare `ini` file and the ini and log filenames
+CSimpleIniA ini;
+const std::string IniFilename(PPL::PluginPath::prependPlanePath("PPLDemo.ini"));
+const std::string LogFilename(PPL::PluginPath::prependPlanePath("PPLDemo.log"));
+
+// Create submenu and actions
+PPL::MenuItem menu("PPL-Demo");
 
 // Our classes and sim elements
 #include <flapretractor.h>
-FlapRetractor flapretractor;
+FlapRetractor flapretractor(ini, menu);
 
-std::unique_ptr<PPL::MessageWindow> msg;
+class Foo : public PPL::MenuAction {
+public:
+  Foo() : dr("PPLDemo/foo", PPL::ReadWrite, true) { menu.addSubItem(this); }
+  const std::string name() const override { return "Foo"; }
+  void doAction() override { dr = 42; }
+
+private:
+  PPL::OwnedData<int> dr;
+
+} foo;
+
+// Use flight loop callback to put up a message
 class SendAMessage : public PPL::Processor {
 public:
   SendAMessage() : PPL::Processor(5.f) {} // start after 5 seconds
   float callback(float, float, int) override {
-    msg = std::make_unique<PPL::MessageWindow>(
+    msg_ = std::make_unique<PPL::MessageWindow>(
         500, 100, "Hello, world!", "I am a message box! Close me and you die.",
         true);
     return 0;
   }
-} msgTimer;
-
-PPL::OnScreenDisplay osd(200, 50, "Hi I'm a PPL::OnScreenDisplay");
-
-class Menu {
-public:
-  Menu() : mi("Hello") { mi.addSubItem(&foo); }
 
 private:
-  PPL::MenuItem mi;
-  class Foo : public PPL::Action {
-  public:
-    Foo() : dr("PPLDemo/foo", PPL::ReadWrite, true) {}
-    const std::string name() const override { return "Foo"; }
-    void doAction() override { dr = 42; }
+  std::unique_ptr<PPL::MessageWindow> msg_;
+} msgTimer;
 
-  private:
-    PPL::OwnedData<int> dr;
-
-  } foo;
-
-} menu;
-
-using namespace std;
-using namespace PPL;
-
-// Declare `ini` file and the ini and log filenames
-CSimpleIniA ini;
-const string IniFilename(PluginPath::prependPlanePath("PPLDemo.ini"));
-const string LogFilename(PluginPath::prependPlanePath("PPLDemo.log"));
+// Draw a translucent box with a title and concealed close button
+PPL::OnScreenDisplay osd(200, 50, "Hi I'm a PPL::OnScreenDisplay");
 
 PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
   char pluginName[] = "PPLDemo";
@@ -114,7 +111,8 @@ PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
   strcpy(outDesc, pluginDesc);
 
   // set up log
-  LogWriter::getLogger().setLogFile(LogFilename);
+  using PPL::Log;
+  PPL::LogWriter::getLogger().setLogFile(LogFilename);
   Log() << Log::Info << "Plugin started. Hello world!" << Log::endl;
 
   // set up ini
@@ -134,6 +132,7 @@ PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
 
 PLUGIN_API void XPluginStop(void) {
   // Save threshold speed to ini file
+  using PPL::Log;
   Log() << Log::Info << "Saving settings file." << Log::endl;
   ini.SaveFile(IniFilename.c_str());
 
