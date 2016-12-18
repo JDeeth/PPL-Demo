@@ -1,13 +1,13 @@
 #pragma once
 
+#include <string>
+
 #include <menuaction.h>
 #include <dataref.h>
 #include <logichandler.h>
 #include <menuitem.h>
 #include <owneddata.h>
 #include <simpleini/SimpleIni.h>
-
-#include <string>
 
 // FlapRetractor retracts flaps above a specified airspeed.
 // This is a trivial demonstration of PPL

@@ -47,8 +47,15 @@ macx { # Untested!
 }
 
 HEADERS += \
-    flapretractor.h
+    flapretractor.h \
+    playannoyingsounds.h \
+    sendamessage.h
 
 SOURCES += \
     plugin.m.cpp \
-    flapretractor.cpp
+    flapretractor.cpp \
+    playannoyingsounds.cpp \
+    sendamessage.cpp
+
+DISTFILES += \
+    README.md

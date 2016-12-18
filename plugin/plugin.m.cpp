@@ -42,6 +42,12 @@
  * SimpleIni loads and saves the flap retraction threshold speed in an .ini file
  */
 
+// Standard libraries
+#include <memory>
+#include <string>
+#include <vector>
+
+// SDK libraries
 #include <XPLMPlugin.h>
 #include <XPLMProcessing.h>
 #include <XPLMUtilities.h>
@@ -49,17 +55,15 @@
 // PPL libraries
 #include <log.h>
 #include <logwriter.h>
-#include <messagewindow.h>
-#include <menuaction.h>
 #include <menuitem.h>
 #include <onscreendisplay.h>
 #include <pluginpath.h>
-#include <processor.h>
 #include <simpleini/SimpleIni.h>
 
-#include <memory>
-#include <string>
-#include <vector>
+// Project libraries
+#include <flapretractor.h>
+#include <playannoyingsounds.h>
+#include <sendamessage.h>
 
 // Declare `ini` file and the ini and log filenames
 CSimpleIniA ini;
@@ -70,34 +74,9 @@ const std::string LogFilename(PPL::PluginPath::prependPlanePath("PPLDemo.log"));
 PPL::MenuItem menu("PPL-Demo");
 
 // Our classes and sim elements
-#include <flapretractor.h>
 FlapRetractor flapretractor(ini, menu);
-
-class Foo : public PPL::MenuAction {
-public:
-  Foo() : dr("PPLDemo/foo", PPL::ReadWrite, true) { menu.addSubItem(this); }
-  const std::string name() const override { return "Foo"; }
-  void doAction() override { dr = 42; }
-
-private:
-  PPL::OwnedData<int> dr;
-
-} foo;
-
-// Use flight loop callback to put up a message
-class SendAMessage : public PPL::Processor {
-public:
-  SendAMessage() : PPL::Processor(5.f) {} // start after 5 seconds
-  float callback(float, float, int) override {
-    msg_ = std::make_unique<PPL::MessageWindow>(
-        500, 100, "Hello, world!", "I am a message box! Close me and you die.",
-        true);
-    return 0;
-  }
-
-private:
-  std::unique_ptr<PPL::MessageWindow> msg_;
-} msgTimer;
+PlayAnnoyingSounds playAnnoyingSounds(menu);
+SendAMessage sendmsg();
 
 // Draw a translucent box with a title and concealed close button
 PPL::OnScreenDisplay osd(200, 50, "Hi I'm a PPL::OnScreenDisplay");
@@ -131,13 +110,13 @@ PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
 }
 
 PLUGIN_API void XPluginStop(void) {
-  // Save threshold speed to ini file
+  // Unlink our classes
+  flapretractor.unhookFromSim();
+
+  // Save changes to .ini file
   using PPL::Log;
   Log() << Log::Info << "Saving settings file." << Log::endl;
   ini.SaveFile(IniFilename.c_str());
-
-  // Unlink our classes
-  flapretractor.unhookFromSim();
 
   Log() << Log::Info << "Plugin stopped." << Log::endl;
 }
