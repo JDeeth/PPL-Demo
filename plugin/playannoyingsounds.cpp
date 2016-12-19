@@ -6,7 +6,7 @@
 #include  <random>
 #include  <iterator>
 
-PlayAnnoyingSounds::PlayAnnoyingSounds(PPLYour_Project_Name::MenuItem &menu)
+PlayAnnoyingSounds::PlayAnnoyingSounds(PPL::MenuItem &menu)
     : PPL::Processor(1.f), enable_(*this, menu) {
 
   auto addWav = [this](std::string filename) {
@@ -48,7 +48,7 @@ float PlayAnnoyingSounds::callback(float, float, int) {
 }
 
 PlayAnnoyingSounds::Enable::Enable(PlayAnnoyingSounds &pas,
-                                   PPLYour_Project_Name::MenuItem &menu)
+                                   PPL::MenuItem &menu)
     : pas_(pas) {
   menu.addSubItem(this);
 }

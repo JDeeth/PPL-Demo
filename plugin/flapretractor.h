@@ -13,8 +13,8 @@
 // This is a trivial demonstration of PPL
 
 // It will load the threshold speed from the referenced .ini file, and store it
-// in a dataref which can be altered. On close, it saves the new value to the
-// .ini file.
+// in a dataref which can be altered. On close, it stages the new value to be 
+// saved in the .ini file.
 
 // The module can be suspended and enabled using a menu item.
 

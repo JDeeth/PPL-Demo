@@ -12,3 +12,8 @@ PPL is included as a *git submodule*. To download, run this command:
     git clone https://github.com/JDeeth/ppl-demo.git --recursive
 
 Then rename the namespace in `common.pri`.
+
+---
+
+This project has been developed under Linux. It should work under OSX and Windows too - if it doesn't, and you're able to make changes so it compiles, please send us a pull request! If it does work, let us know so we can update this readme.
+
