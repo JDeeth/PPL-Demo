@@ -11,6 +11,7 @@
 
 // Standard libraries
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -32,6 +33,9 @@
 #include <playannoyingsounds.h>
 #include <sendamessage.h>
 
+// Draw popup window with compilation info
+std::unique_ptr<PPL::MessageWindow> compile_msg;
+
 // Declare `ini` file and the ini and log filenames
 CSimpleIniA ini;
 const std::string IniFilename(PPL::PluginPath::prependPlanePath("PPLDemo.ini"));
@@ -49,12 +53,18 @@ SendAMessage sendmsg();
 PPL::OnScreenDisplay osd(200, 50, "Hi I'm a PPL::OnScreenDisplay");
 
 PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
-  char pluginName[] = "PPLDemo";
-  char pluginSig[] = "PPLDemo";
-  char pluginDesc[] = "Demonstrates PPL features.";
-  strcpy(outName, pluginName);
-  strcpy(outSig, pluginSig);
-  strcpy(outDesc, pluginDesc);
+  {
+    char name[] = "PPLDemo";
+    char sig[] = "PPLDemo";
+    std::stringstream desc;
+    desc << "Compiled " << __DATE__ << " " << __TIME__;
+    // Can be extended to list the compiler version, build number, etc
+    strcpy(outName, name);
+    strcpy(outSig, sig);
+    strcpy(outDesc, desc.str().c_str());
+    compile_msg = std::make_unique<PPL::MessageWindow>(
+        500, 100, name, desc.str().c_str(), false);
+  }
 
   // set up log
   using PPL::Log;
