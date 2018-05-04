@@ -2,14 +2,14 @@
 
 #include <vector>
 
+#include <action.h>
 #include <alcontextmanager.h>
-#include <menuaction.h>
 #include <menuitem.h>
 #include <processor.h>
 
 class PlayAnnoyingSounds : public PPL::Processor {
 public:
-  PlayAnnoyingSounds(PPL::MenuItem &menu);
+  PlayAnnoyingSounds(PPL::MenuItem& menu);
   float callback(float, float, int) override;
 
 private:
@@ -18,14 +18,14 @@ private:
   std::vector<int>::iterator nextWavId_;
   bool running_;
 
-  class Enable : public PPL::MenuAction {
+  class Enable : public PPL::Action {
   public:
-    Enable(PlayAnnoyingSounds &pas, PPL::MenuItem &menu);
+    Enable(PlayAnnoyingSounds& pas, PPL::MenuItem& menu);
     const std::string name() const override;
     void doAction() override;
 
   private:
-    PlayAnnoyingSounds &pas_;
+    PlayAnnoyingSounds& pas_;
   };
 
   Enable enable_;

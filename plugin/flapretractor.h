@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <menuaction.h>
+#include <action.h>
 #include <dataref.h>
 #include <logichandler.h>
 #include <menuitem.h>
@@ -13,7 +13,7 @@
 // This is a trivial demonstration of PPL
 
 // It will load the threshold speed from the referenced .ini file, and store it
-// in a dataref which can be altered. On close, it stages the new value to be 
+// in a dataref which can be altered. On close, it stages the new value to be
 // saved in the .ini file.
 
 // The module can be suspended and enabled using a menu item.
@@ -23,24 +23,22 @@
 // `XPluginStart()` and `XPluginStop()`.
 
 class FlapRetractor : public PPL::LogicHandler {
-  // Data members needed for simulation, and a constructor to set them up:
 public:
-  FlapRetractor(CSimpleIni &ini, PPL::MenuItem &menu);
+  FlapRetractor(CSimpleIni& ini);
 
 private:
   PPL::DataRef<float> airspeed_;
   PPL::DataRef<float> flapControl_;
   PPL::OwnedData<float> retractSpeedKts_;
   bool suspended_;
-  CSimpleIni &ini_;
-  PPL::LHEnable enable_;
+  CSimpleIni& ini_;
 
   // inherited interface from `PPL::LogicHandler` we must implement:
 public:
   bool initializeAtStart() override;
   bool initializeOnAircraftChange() override;
   bool processInTheLoop() override;
-  bool processInput(long input, void *param) override;
+  bool processInput(long input, void* param) override;
   float loopFrequency() override;
   void suspend(bool yes) override;
   bool isSuspended() const override;

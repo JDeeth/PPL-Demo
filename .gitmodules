@@ -1,3 +1,6 @@
 [submodule "ppl"]
 	path = ppl
 	url = https://github.com/jdeeth/ppl.git
+[submodule "xplane_sdk"]
+	path = xplane_sdk
+	url = https://github.com/leecbaker/xplane_sdk.git

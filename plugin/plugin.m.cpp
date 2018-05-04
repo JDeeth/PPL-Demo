@@ -34,25 +34,27 @@
 #include <sendamessage.h>
 
 // Draw popup window with compilation info
-std::unique_ptr<PPL::MessageWindow> compile_msg;
+static std::unique_ptr<PPL::MessageWindow> compile_msg;
 
 // Declare `ini` file and the ini and log filenames
-CSimpleIniA ini;
-const std::string IniFilename(PPL::PluginPath::prependPlanePath("PPLDemo.ini"));
-const std::string LogFilename(PPL::PluginPath::prependPlanePath("PPLDemo.log"));
+static CSimpleIniA ini;
+static const std::string IniFilename(
+    PPL::PluginPath::prependPlanePath("PPLDemo.ini"));
+static const std::string LogFilename(
+    PPL::PluginPath::prependPlanePath("PPLDemo.log"));
 
 // Create submenu and actions
-PPL::MenuItem menu("PPL-Demo");
+static PPL::MenuItem menu("PPL-Demo");
 
 // Our classes and sim elements
-FlapRetractor flapretractor(ini, menu);
-PlayAnnoyingSounds playAnnoyingSounds(menu);
-SendAMessage sendmsg();
+static std::unique_ptr<FlapRetractor> flapretractor;
+static std::unique_ptr<PlayAnnoyingSounds> playannoyingsounds;
+static std::unique_ptr<SendAMessage> sendmsg;
 
 // Draw a translucent box with a title and concealed close button
-PPL::OnScreenDisplay osd(200, 50, "Hi I'm a PPL::OnScreenDisplay");
+static PPL::OnScreenDisplay osd(200, 50, "Hi I'm a PPL::OnScreenDisplay");
 
-PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
+PLUGIN_API int XPluginStart(char* outName, char* outSig, char* outDesc) {
   {
     char name[] = "PPLDemo";
     char sig[] = "PPLDemo";
@@ -82,13 +84,16 @@ PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
   }
 
   // Link up our classes
-  flapretractor.hookToSim();
+  sendmsg = std::make_unique<SendAMessage>();
+  playannoyingsounds = std::make_unique<PlayAnnoyingSounds>(menu);
+  flapretractor = std::make_unique<FlapRetractor>(ini);
+  flapretractor->hookToSim();
   return 1;
 }
 
 PLUGIN_API void XPluginStop(void) {
   // Unlink our classes
-  flapretractor.unhookFromSim();
+  flapretractor->unhookFromSim();
 
   // Save changes to .ini file
   using PPL::Log;
@@ -99,5 +104,7 @@ PLUGIN_API void XPluginStop(void) {
 }
 
 PLUGIN_API void XPluginDisable(void) {}
-PLUGIN_API int XPluginEnable(void) { return 1; }
-PLUGIN_API void XPluginReceiveMessage(XPLMPluginID, long, void *) {}
+PLUGIN_API int XPluginEnable(void) {
+  return 1;
+}
+PLUGIN_API void XPluginReceiveMessage(XPLMPluginID, long, void*) {}
