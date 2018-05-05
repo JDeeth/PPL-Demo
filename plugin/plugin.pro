@@ -51,15 +51,17 @@ macx {
 }
 
 HEADERS += \
-    flapretractor.h \
     playannoyingsounds.h \
-    sendamessage.h
+    sendamessage.h \
+    demo.h \
+    autoretract.h
 
 SOURCES += \
     plugin.m.cpp \
-    flapretractor.cpp \
     playannoyingsounds.cpp \
-    sendamessage.cpp
+    sendamessage.cpp \
+    demo.cpp \
+    autoretract.cpp
 
 DISTFILES += \
     README.md
