@@ -1,19 +1,54 @@
 PPL-Demo
 ========
 
-This is a QMake project which contains the PPL library and a demo plugin as subprojects, such that both can be built and linked in one go.
+This is a demonstration of [Philipp Ringler's Plugin Patterns Library](https://github.com/JDeeth/PPL), a set of C++ wrappers for the X-Plane SDK
+and OpenGL/OpenAL.
 
-https://github.com/JDeeth/PPL is a PPL fork which can be compiled, still as a static library, as a subproject. Just add `subproject` to the CONFIG list.
+This uses [my fork of PPL](https://github.com/JDeeth/PPL), which has a few
+minor additions. These are marked in the comments.
 
-Rather than defining your PPL namespace with a command line flag, the `#define PRIVATENAMESPACE=<your unique identifier>` is stored in `common.pri`, which is then included in the plugin and PPL .pro files.
-
-PPL is included as a *git submodule*. To download, run this command:
+To download along with the git submodules, use this command:
 
     git clone https://github.com/JDeeth/ppl-demo.git --recursive
 
-Then rename the namespace in `common.pri`.
+then open `ppl-demo.pro` with Qt Creator. PPL and the demo plugin are
+included as QMake subprojects.
 
----
+This project has been developed under Linux. `plugin.pro` will definitely need
+to be updated to compile under OSX and Windows, with the location of the
+compiled PPL static library and OpenGL libraries. If you're able to make these
+changes, please send a pull request! You should be able to compile PPL as a
+subproject immediately.
 
-This project has been developed under Linux. It should work under OSX and Windows too - if it doesn't, and you're able to make changes so it compiles, please send us a pull request! If it does work, let us know so we can update this readme.
+When compiling the plugin, add `-recursive CONFIG+=withsound` to the QMake settings
+in Qt Creator.
 
+When testing the plugin, copy the `sounds` directory to the test aircraft folder.
+
+--------------------------------------------------------------------------------
+
+This project currently demonstrates these features of PPL:
+
+* `DataRef` to access existing datarefs
+* `OwnedData` to create new datarefs
+* `Processor` for flight-loop callback functions
+* `ALContextManager` to play sounds
+* `PluginPath`
+* `Log` and `LogWriter`
+* `MenuItem` and `Action` for menu items
+* `MessageWindow`
+* `OnScreenDisplay`
+
+These features are not demonstrated yet:
+
+* `OwnedData` and `DataRef` with arrays and custom callbacks
+* `Command` for accessing and creating commands
+* `DrawCallback` for managing drawing-loop callbacks
+* `FontMgr` to draw TTF fonts
+* `LogicHandler`, kinda a more baroque `Processor`
+* `OverlayGauge`, an OpenGL context for drawing on the 3D cockpit and in popup
+   windows
+* `Settings`, a wrapper around SimpleIni
+* `Smoothed`, a very simple filter for smoothing out changing data
+* `Texture`; loads a bitmap for OpenGL drawing
+* `VertexBuffer`; wraps an OpenGL Vertex Buffer Object. Uses glMapBuffer.

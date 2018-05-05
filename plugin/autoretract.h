@@ -1,3 +1,11 @@
+// Copyright Jack Deeth, 2018 - see attached LICENSE
+
+/* autoretract.h
+ *
+ * Automatically retracts the flaps above a specified speed.
+ *
+ * Demonstrates PPL::DataRef, PPL::OwnedData, and PPL::Processor
+ */
 #pragma once
 
 #include <XPLMUtilities.h>
@@ -9,25 +17,19 @@
 
 class AutoRetract : private PPL::Processor {
 public:
-  AutoRetract(CSimpleIni& ini);
-
-  void load();
-  void save();
+  void load(CSimpleIni& ini);
+  void save(CSimpleIni& ini);
 
 private:
-  // This function is registered as a XPLMFlightLoopCallback function by
-  // PPL::Processor
+  // PPL::Processor wraps the SDK functions to register a FlightLoopCallback
+  // function. This is the callback function.
   virtual float callback(float, float, int) override;
-
-  CSimpleIni& ini_;
 
   // PPL::DataRef connects to an existing dataref. Can be int, float, double,
   // std::vector<int>, std::vector<float>, or std::string.
   PPL::DataRef<float> airspeed_kts_{
       "sim/cockpit2/gauges/indicators/airspeed_kts_pilot"};
 
-  // Here we're using C++11 member initialisation, but these could be
-  // initialised in a class constructor instead.
   PPL::DataRef<float> flap_control_{"sim/cockpit2/controls/flap_ratio",
                                     PPL::ReadWrite};
 

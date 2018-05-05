@@ -53,15 +53,15 @@ macx {
 HEADERS += \
     playannoyingsounds.h \
     sendamessage.h \
-    demo.h \
-    autoretract.h
+    autoretract.h \
+    ppldemo.h
 
 SOURCES += \
-    plugin.m.cpp \
     playannoyingsounds.cpp \
     sendamessage.cpp \
-    demo.cpp \
-    autoretract.cpp
+    autoretract.cpp \
+    plugin.cpp \
+    ppldemo.cpp
 
 DISTFILES += \
-    README.md
+    README.md \

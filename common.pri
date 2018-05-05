@@ -1,1 +1,0 @@
-DEFINES += PRIVATENAMESPACE=Your_Project_Name
